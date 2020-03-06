@@ -1,0 +1,116 @@
+#include <time.h>
+#include "intr.h"
+#include "functions.h"
+#include <unistd.h>
+#include <wand/MagickWand.h>
+/*
+MagickWand
+    *magick_wand;
+DrawingWand *d_wand;
+
+PixelWand *p_wand; 
+*/
+void reg(FCGX_Stream *out,MYSQL *mysql)
+{
+    srand(time(NULL));
+    unsigned int cook;
+    cook = rand();
+
+    char *cook1;
+    cook1 = (char*)calloc(150, sizeof(char));
+    sprintf(cook1, "%d", cook); 
+    rawdata(cook1,out);
+    
+    char *cookie;	
+    cookie = (char*)calloc(100, sizeof(char));
+    int i;
+/*    MD5_CTX md5handler;
+    unsigned char md5digest[MD5_DIGEST_LENGTH];
+        
+    MD5_Init(&md5handler);
+    MD5_Update(&md5handler, "cook1", strlen(cook1));
+    MD5_Final(md5digest,&md5handler);
+    for (i=0;i<MD5_DIGEST_LENGTH;i++) {
+        sprintf(cookie,"%02x",md5digest[i]);
+    };
+*/	        
+    int r1; 
+    r1 = rand() % 10;
+    int r2;
+    r2 = rand() % 10;
+    int res;
+    res = r1 + r2;
+    char *query;
+//    query = "insert into sessions (cookie,type,captcha) values {'cookie', '2', 'res')";
+//    mysql_real_query(mysql,query,strlen(query));
+/*    char *binaryPath = "/usr/bin/convert";
+    char *arg1 ="-size";
+    char *arg2 = "256x64";
+    char *arg3 = "-fill";
+    char *arg4 = "black";
+    char *arg5 = "-font";
+    char *arg6 = "Helvetica";
+    char *buf;
+    buf = (char*)calloc(50, sizeof(char)); 
+    sprintf(buf,"caption:@%d+%d=", r1, r2); 
+    char *arg7 = buf;
+    char *buf1;
+    buf1 = (char*)calloc(50, sizeof(char)); 
+    sprintf(buf1,"/tmp/$s.gif", "123");
+    char *arg8 = buf1;
+*/
+//    execl( binaryPath,  arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, NULL);
+
+    tpl("tpl/form.tpl",out);
+
+
+    char tmp[50];
+    char *buf;
+    buf = (char*)calloc(50, sizeof(char)); 
+    sprintf(buf,"%d+%d=", r1, r2); 
+    strcpy(tmp,buf);
+    char *buf1;
+    buf1 = (char*)calloc(50, sizeof(char)); 
+    sprintf(buf1,"tmp/%s.gif", cook1);
+    char tmp1[50];
+    strcpy(tmp1,buf1);
+
+
+    MagickWand *magick_wand = NULL;
+    DrawingWand *d_wand = NULL;
+    PixelWand *p_wand = NULL;
+
+    magick_wand = NewMagickWand();
+    d_wand = NewDrawingWand();
+    p_wand = NewPixelWand();
+
+
+    // Read the image. Change "logo:" to the name of your input image file
+    MagickReadImage(magick_wand,"images/white.gif");
+
+    // Set up the font size and colour
+    DrawSetFont(d_wand,"Helvetica");
+    PixelSetColor(p_wand,"red");
+    DrawSetFillColor(d_wand,p_wand);
+    DrawSetFontSize(d_wand,30);
+    // Now draw the text
+    DrawAnnotation(d_wand, 10, 10,"blablabla");
+    MagickWriteImage(magick_wand,tmp1);
+
+    /* Clean up */
+    if(magick_wand)magick_wand = DestroyMagickWand(magick_wand);
+    if(d_wand)d_wand = DestroyDrawingWand(d_wand);
+    if(p_wand)p_wand = DestroyPixelWand(p_wand);
+
+
+
+    char *buf2;
+    buf2 = (char*)calloc(200, sizeof(char));
+    sprintf(buf2,"<br><img src=\"%s\"%><input type=\"text\" name=\"answer\"<br><input type=\"submit\" value=\"Поехали!\">",buf1);
+    rawdata(buf2,out);
+    free(cook1);
+    free(buf);
+    free(buf1);
+    free(buf2);
+    free(cookie);
+}

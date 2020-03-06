@@ -1,0 +1,1 @@
+select count(*) from <table> where username = @username and password = MD5(@password)
